@@ -5,7 +5,15 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -21,7 +29,7 @@ public class Vista extends javax.swing.JFrame {
     private Color color;
     private int grosor;
     private int decoracionExtremo;
-    private int decoracionDoblado;
+    private String direccion;
     private float[] dash;
 
     public Vista() {
@@ -31,7 +39,6 @@ public class Vista extends javax.swing.JFrame {
         colorSeleccionado.setOpaque(true);
         grosor = 1;
         decoracionExtremo = BasicStroke.CAP_BUTT;
-        decoracionDoblado = BasicStroke.JOIN_MITER;
         cambiarColor(Color.black);
     }
 
@@ -109,6 +116,8 @@ public class Vista extends javax.swing.JFrame {
         consola = new javax.swing.JTextArea();
         menuPrincipal = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
+        btnGuardarLienzo = new javax.swing.JMenuItem();
+        btnNuevoLienzo = new javax.swing.JMenuItem();
         menuVer = new javax.swing.JMenu();
         menuCuadricula = new javax.swing.JCheckBoxMenuItem();
 
@@ -768,6 +777,23 @@ public class Vista extends javax.swing.JFrame {
 
         menuArchivo.setText("Archivo");
         menuArchivo.setFont(new java.awt.Font("Segoe UI Light", 0, 14)); // NOI18N
+
+        btnGuardarLienzo.setText("Guardar");
+        btnGuardarLienzo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarLienzoActionPerformed(evt);
+            }
+        });
+        menuArchivo.add(btnGuardarLienzo);
+
+        btnNuevoLienzo.setText("Nuevo Lienzo");
+        btnNuevoLienzo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoLienzoActionPerformed(evt);
+            }
+        });
+        menuArchivo.add(btnNuevoLienzo);
+
         menuPrincipal.add(menuArchivo);
 
         menuVer.setText("Ver");
@@ -793,7 +819,7 @@ public class Vista extends javax.swing.JFrame {
 
         colorSeleccionado.setBackground(color);
         g.setColor(color);
-        g.setStroke(new BasicStroke(grosor, decoracionExtremo, decoracionDoblado, 5, dash, 0));
+        g.setStroke(new BasicStroke(grosor, decoracionExtremo, decoracionExtremo, 5, dash, 0));
 
         if (figura != null) {
             if (figura.equals("linea")) {
@@ -820,6 +846,22 @@ public class Vista extends javax.swing.JFrame {
         }
 
         //getContentPane().getComponent(2).repaint();
+    }
+
+    public void guardarLienzo() throws Exception {
+        Rectangle screenRectangle = new Rectangle(210, 235, 1500, 754);
+        Robot robot = new Robot();
+        BufferedImage image = robot.createScreenCapture(screenRectangle);
+        
+        JFileChooser directorio = new JFileChooser();
+        int sel = directorio.showSaveDialog(this);
+
+        if (sel == JFileChooser.APPROVE_OPTION) {
+            File f = directorio.getSelectedFile();
+
+            direccion = f.getPath();
+            ImageIO.write(image, "png", new File(direccion + ".jpg"));
+        }
     }
 
     private void imprimir() {
@@ -950,58 +992,62 @@ public class Vista extends javax.swing.JFrame {
     }//GEN-LAST:event_txtExtremosItemStateChanged
 
     private void cambioTrazoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cambioTrazoItemStateChanged
-        
+
         switch (cambioTrazo.getSelectedIndex()) {
-            case 0:
-                {
-                    float[] dash1 = null;
-                    dash = dash1;
-                    break;
-                }
-            case 1:
-                {
-                    float[] dash1 = {30f, 10f, 10f, 10f};
-                    dash = dash1;
-                    break;
-                }
-            case 2:
-                {
-                    float[] dash1 = {10f, 10f};
-                    dash = dash1;
-                    break;
-                }
-            case 3:
-                {
-                    float[] dash1 = {20f, 10f, 10f, 10f, 30f, 10f, 10f, 10f};
-                    dash = dash1;
-                    break;
-                }
-            case 4:
-                {
-                    float[] dash1 = {10f, 30f};
-                    dash = dash1;
-                    break;
-                }
-            case 5:
-                {
-                    float[] dash1 = {20f, 20f, 10f, 20f};
-                    dash = dash1;
-                    break;
-                }
-            case 6:
-                {
-                    float[] dash1 = {30f, 30f, 10f, 30f};
-                    dash = dash1;
-                    break;
-                }
+            case 0: {
+                float[] dash1 = null;
+                dash = dash1;
+                break;
+            }
+            case 1: {
+                float[] dash1 = {30f, 10f, 10f, 10f};
+                dash = dash1;
+                break;
+            }
+            case 2: {
+                float[] dash1 = {10f, 10f};
+                dash = dash1;
+                break;
+            }
+            case 3: {
+                float[] dash1 = {20f, 10f, 10f, 10f, 30f, 10f, 10f, 10f};
+                dash = dash1;
+                break;
+            }
+            case 4: {
+                float[] dash1 = {10f, 30f};
+                dash = dash1;
+                break;
+            }
+            case 5: {
+                float[] dash1 = {20f, 20f, 10f, 20f};
+                dash = dash1;
+                break;
+            }
+            case 6: {
+                float[] dash1 = {30f, 30f, 10f, 30f};
+                dash = dash1;
+                break;
+            }
             default:
                 break;
         }
-        
-        
-        
+
         cambiarLinea();
     }//GEN-LAST:event_cambioTrazoItemStateChanged
+
+    private void btnGuardarLienzoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarLienzoActionPerformed
+        try {
+            guardarLienzo();
+        } catch (Exception ex) {
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnGuardarLienzoActionPerformed
+
+    private void btnNuevoLienzoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoLienzoActionPerformed
+        Vista vista = new Vista();
+        vista.setVisible(true);
+    }//GEN-LAST:event_btnNuevoLienzoActionPerformed
 
     public static void main(String args[]) {
 
@@ -1026,6 +1072,8 @@ public class Vista extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel botonCambiarColor;
+    private javax.swing.JMenuItem btnGuardarLienzo;
+    private javax.swing.JMenuItem btnNuevoLienzo;
     private javax.swing.JComboBox<String> cambioTrazo;
     private javax.swing.JLabel colorSeleccionado;
     private javax.swing.JTextArea consola;
