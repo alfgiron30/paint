@@ -5,7 +5,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -33,6 +32,8 @@ public class Vista extends javax.swing.JFrame {
     private int decoracionExtremo;
     private String direccion;
     private float[] dash;
+    private Graphics2D auxiliar;
+    private boolean rellenar;
 
     public Vista() {
         initComponents();
@@ -43,7 +44,7 @@ public class Vista extends javax.swing.JFrame {
         grosor = 1;
         decoracionExtremo = BasicStroke.CAP_BUTT;
         cambiarColor(Color.black);
-        
+        rellenar = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -59,7 +60,7 @@ public class Vista extends javax.swing.JFrame {
         panelMenu3 = new javax.swing.JPanel();
         txtMenu3 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
-        btnLapiz = new javax.swing.JLabel();
+        btnGoma = new javax.swing.JLabel();
         btnLapiz1 = new javax.swing.JLabel();
         panelMenu4 = new javax.swing.JPanel();
         txtMenu4 = new javax.swing.JLabel();
@@ -69,6 +70,7 @@ public class Vista extends javax.swing.JFrame {
         pruebaDecoradorLineas = new javax.swing.JPanel();
         cambioTrazo = new javax.swing.JComboBox<>();
         txtExtremos = new javax.swing.JComboBox<>();
+        checkRellenar = new javax.swing.JCheckBox();
         panelMenu5 = new javax.swing.JPanel();
         jSeparator4 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
@@ -118,8 +120,6 @@ public class Vista extends javax.swing.JFrame {
         seleccionColorAzul = new javax.swing.JLabel();
         separador = new javax.swing.JSeparator();
         panelLienzo = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        consola = new javax.swing.JTextArea();
         menuPrincipal = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
         btnGuardarLienzo = new javax.swing.JMenuItem();
@@ -128,7 +128,7 @@ public class Vista extends javax.swing.JFrame {
         menuCuadricula = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setFocusable(false);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         panelHerramientas.setBackground(new java.awt.Color(255, 255, 0));
@@ -205,14 +205,14 @@ public class Vista extends javax.swing.JFrame {
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
         panelMenu3.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 32, 22, 70));
 
-        btnLapiz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Herramientas/goma.png"))); // NOI18N
-        btnLapiz.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnLapiz.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnGoma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Herramientas/goma.png"))); // NOI18N
+        btnGoma.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGoma.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnLapizMouseClicked(evt);
+                btnGomaMouseClicked(evt);
             }
         });
-        panelMenu3.add(btnLapiz, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, -1, -1));
+        panelMenu3.add(btnGoma, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, -1, -1));
 
         btnLapiz1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Herramientas/lapiz.png"))); // NOI18N
         btnLapiz1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -240,10 +240,10 @@ public class Vista extends javax.swing.JFrame {
         panelMenu4.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 41, 22, 70));
 
         jLabel4.setText("Extremos:");
-        panelMenu4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, -1));
+        panelMenu4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, -1, -1));
 
         jLabel5.setText("Tipo de linea:");
-        panelMenu4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, -1, -1));
+        panelMenu4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
 
         pruebaDecoradorLineas.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -266,7 +266,7 @@ public class Vista extends javax.swing.JFrame {
                 cambioTrazoItemStateChanged(evt);
             }
         });
-        panelMenu4.add(cambioTrazo, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, 105, -1));
+        panelMenu4.add(cambioTrazo, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 80, 105, -1));
 
         txtExtremos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguna", "Redonda", "Cuadrada" }));
         txtExtremos.addItemListener(new java.awt.event.ItemListener() {
@@ -274,7 +274,15 @@ public class Vista extends javax.swing.JFrame {
                 txtExtremosItemStateChanged(evt);
             }
         });
-        panelMenu4.add(txtExtremos, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, -1, -1));
+        panelMenu4.add(txtExtremos, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 50, -1, -1));
+
+        checkRellenar.setText("Rellenar Figura");
+        checkRellenar.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                checkRellenarItemStateChanged(evt);
+            }
+        });
+        panelMenu4.add(checkRellenar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 130, -1));
 
         panelHerramientas.add(panelMenu4, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 0, 230, 130));
 
@@ -760,27 +768,15 @@ public class Vista extends javax.swing.JFrame {
             }
         });
 
-        jScrollPane1.setForeground(new java.awt.Color(0, 0, 0));
-
-        consola.setColumns(20);
-        consola.setRows(5);
-        jScrollPane1.setViewportView(consola);
-
         javax.swing.GroupLayout panelLienzoLayout = new javax.swing.GroupLayout(panelLienzo);
         panelLienzo.setLayout(panelLienzoLayout);
         panelLienzoLayout.setHorizontalGroup(
             panelLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLienzoLayout.createSequentialGroup()
-                .addGap(395, 395, 395)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(795, Short.MAX_VALUE))
+            .addGap(0, 1500, Short.MAX_VALUE)
         );
         panelLienzoLayout.setVerticalGroup(
             panelLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLienzoLayout.createSequentialGroup()
-                .addGap(89, 89, 89)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(446, Short.MAX_VALUE))
+            .addGap(0, 760, Short.MAX_VALUE)
         );
 
         getContentPane().add(panelLienzo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 1500, 760));
@@ -821,7 +817,6 @@ public class Vista extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void dibujarFiguras(Graphics g2) {
-
         Graphics2D g = (Graphics2D) g2;
 
         int tamañoX = mouseXfin - mouseXinicio;
@@ -835,31 +830,53 @@ public class Vista extends javax.swing.JFrame {
             if (figura.equals("linea")) {
                 g.drawLine(mouseXinicio, mouseYinicio, mouseXfin, mouseYfin);
             } else if (figura.equals("cuadrado")) {
-                g.drawRect(mouseXinicio, mouseYinicio, tamañoX, tamañoX);
+                if(rellenar){
+                    g.fillRect(mouseXinicio, mouseYinicio, tamañoX, tamañoX);
+                }else{
+                    g.drawRect(mouseXinicio, mouseYinicio, tamañoX, tamañoX);
+                }
             } else if (figura.equals("rectangulo")) {
-                g.drawRect(mouseXinicio, mouseYinicio, tamañoX, tamañoY);
+                if(rellenar){
+                    g.fillRect(mouseXinicio, mouseYinicio, tamañoX, tamañoY);
+                }else{
+                    g.drawRect(mouseXinicio, mouseYinicio, tamañoX, tamañoY);
+                }
             } else if (figura.equals("elipse")) {
-                g.drawOval(mouseXinicio, mouseYinicio, tamañoX, tamañoY);
+                if(rellenar){
+                    g.fillOval(mouseXinicio, mouseYinicio, tamañoX, tamañoY);
+                }else{
+                    g.drawOval(mouseXinicio, mouseYinicio, tamañoX, tamañoY);
+                }
             } else if (figura.equals("triangulo")) {
                 int[] x = {mouseXinicio + (tamañoX / 2), mouseXfin, mouseXinicio};
                 int[] y = {mouseYinicio, mouseYfin, mouseYfin};
-                g.drawPolygon(x, y, 3);
+                if(rellenar){
+                    g.fillPolygon(x, y, 3);
+                }else{
+                    g.drawPolygon(x, y, 3);
+                }
             } else if (figura.equals("triangulo2")) {
                 int[] x = {mouseXinicio, mouseXfin, mouseXinicio};
                 int[] y = {mouseYinicio, mouseYfin, mouseYfin};
-                g.drawPolygon(x, y, 3);
+                if(rellenar){
+                    g.fillPolygon(x, y, 3);
+                }else{
+                    g.drawPolygon(x, y, 3);
+                }
             } else if (figura.equals("rombo")) {
                 int[] x = {mouseXinicio + (tamañoX / 2), mouseXfin, mouseXfin - (tamañoX / 2), mouseXinicio};
                 int[] y = {mouseYinicio, mouseYinicio + (tamañoY / 2), mouseYfin, mouseYfin - (tamañoY / 2)};
-                g.drawPolygon(x, y, 4);
+                if(rellenar){
+                    g.fillPolygon(x, y, 4);
+                }else{
+                    g.drawPolygon(x, y, 4);
+                }
             } else if (figura.equals("lapiz")) {
                 decoracionExtremo = 1;
-                g.setStroke(new BasicStroke(grosor, decoracionExtremo, decoracionExtremo));
+                //g.setStroke(new BasicStroke(grosor, decoracionExtremo, decoracionExtremo));
                 g.drawLine(mouseXinicio, mouseYinicio, mouseXfin, mouseYfin);
             }
         }
-
-        //getContentPane().getComponent(2).repaint();
     }
 
     
@@ -882,13 +899,6 @@ public class Vista extends javax.swing.JFrame {
             direccion = f.getPath();
             ImageIO.write(image, "png", new File(direccion + ".jpg"));
         }
-    }
-
-    private void imprimir() {
-        String impresion;
-        impresion = "INICIO \nX = " + mouseXinicio + "\nY = " + mouseYinicio + "\n\nFIN \nX = " + mouseXfin + "\nY = " + mouseYfin;
-        impresion += "\n\nx= " + jLabel1.getX() + " Y= " + jLabel1.getY();
-        consola.setText(impresion);
     }
 
     private void cambiarColor(Color c) {
@@ -945,9 +955,11 @@ public class Vista extends javax.swing.JFrame {
         mouseXfin = evt.getX();
         mouseYfin = evt.getY();
 
-        imprimir();
-        dibujarFiguras(getContentPane().getComponent(2).getGraphics());
+        //dibujarFiguras(getContentPane().getComponent(2).getGraphics());
+        //getContentPane().getComponent(2).paint(auxiliar);
+        //dibujarFiguras(getContentPane().getComponent(2).getGraphics());
         if(figura.equals("lapiz")){
+            dibujarFiguras(getContentPane().getComponent(2).getGraphics());
             mouseXinicio = mouseXfin;
             mouseYinicio = mouseYfin;
         }
@@ -1066,19 +1078,19 @@ public class Vista extends javax.swing.JFrame {
         vista.setVisible(true);
     }//GEN-LAST:event_btnNuevoLienzoActionPerformed
 
-    private void btnLapizMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLapizMouseClicked
+    private void btnGomaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGomaMouseClicked
         figura = "lapiz";
-    }//GEN-LAST:event_btnLapizMouseClicked
+    }//GEN-LAST:event_btnGomaMouseClicked
 
     private void btnLapiz1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLapiz1MouseClicked
         figura = "lapiz";
     }//GEN-LAST:event_btnLapiz1MouseClicked
 
     private void panelLienzoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelLienzoMousePressed
+        //auxiliar = (Graphics2D) getContentPane().getComponent(2).getGraphics();
         mouseXinicio = mouseXfin = evt.getX();
         mouseYinicio = mouseYfin = evt.getY();
-        
-        this.imprimir();
+        //dibujarFiguras(getContentPane().getComponent(2).getGraphics());
     }//GEN-LAST:event_panelLienzoMousePressed
 
     private void panelLienzoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelLienzoMouseClicked
@@ -1086,6 +1098,14 @@ public class Vista extends javax.swing.JFrame {
         mouseYfin = mouseYinicio = evt.getY();
         dibujarFiguras(getContentPane().getComponent(2).getGraphics());
     }//GEN-LAST:event_panelLienzoMouseClicked
+
+    private void checkRellenarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkRellenarItemStateChanged
+        if(checkRellenar.isSelected()){
+            rellenar = true;
+        }else{
+            rellenar = false;
+        }
+    }//GEN-LAST:event_checkRellenarItemStateChanged
 
     public static void main(String args[]) {
 
@@ -1110,13 +1130,13 @@ public class Vista extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel botonCambiarColor;
+    private javax.swing.JLabel btnGoma;
     private javax.swing.JMenuItem btnGuardarLienzo;
-    private javax.swing.JLabel btnLapiz;
     private javax.swing.JLabel btnLapiz1;
     private javax.swing.JMenuItem btnNuevoLienzo;
     private javax.swing.JComboBox<String> cambioTrazo;
+    private javax.swing.JCheckBox checkRellenar;
     private javax.swing.JLabel colorSeleccionado;
-    private javax.swing.JTextArea consola;
     private javax.swing.JComboBox<String> grosorSeleccionado;
     private javax.swing.JLabel herramientaCuadrado;
     private javax.swing.JLabel herramientaElipse;
@@ -1146,7 +1166,6 @@ public class Vista extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
