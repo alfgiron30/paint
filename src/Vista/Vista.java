@@ -5,8 +5,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.logging.Level;
@@ -34,12 +36,14 @@ public class Vista extends javax.swing.JFrame {
 
     public Vista() {
         initComponents();
+        setPropiedadesApp();
         this.setLocationRelativeTo(null);
 
         colorSeleccionado.setOpaque(true);
         grosor = 1;
         decoracionExtremo = BasicStroke.CAP_BUTT;
         cambiarColor(Color.black);
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -55,6 +59,8 @@ public class Vista extends javax.swing.JFrame {
         panelMenu3 = new javax.swing.JPanel();
         txtMenu3 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
+        btnLapiz = new javax.swing.JLabel();
+        btnLapiz1 = new javax.swing.JLabel();
         panelMenu4 = new javax.swing.JPanel();
         txtMenu4 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
@@ -187,33 +193,35 @@ public class Vista extends javax.swing.JFrame {
 
         panelMenu3.setBackground(new java.awt.Color(255, 255, 255));
         panelMenu3.setForeground(new java.awt.Color(51, 51, 51));
+        panelMenu3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtMenu3.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
         txtMenu3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txtMenu3.setText("Herramientas");
         txtMenu3.setToolTipText("");
+        panelMenu3.add(txtMenu3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 108, 138, -1));
 
         jSeparator2.setForeground(new java.awt.Color(204, 204, 204));
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        panelMenu3.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 32, 22, 70));
 
-        javax.swing.GroupLayout panelMenu3Layout = new javax.swing.GroupLayout(panelMenu3);
-        panelMenu3.setLayout(panelMenu3Layout);
-        panelMenu3Layout.setHorizontalGroup(
-            panelMenu3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelMenu3Layout.createSequentialGroup()
-                .addGroup(panelMenu3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMenu3, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panelMenu3Layout.setVerticalGroup(
-            panelMenu3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelMenu3Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtMenu3))
-        );
+        btnLapiz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Herramientas/goma.png"))); // NOI18N
+        btnLapiz.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLapiz.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnLapizMouseClicked(evt);
+            }
+        });
+        panelMenu3.add(btnLapiz, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, -1, -1));
+
+        btnLapiz1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Herramientas/lapiz.png"))); // NOI18N
+        btnLapiz1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLapiz1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnLapiz1MouseClicked(evt);
+            }
+        });
+        panelMenu3.add(btnLapiz1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, -1));
 
         panelHerramientas.add(panelMenu3, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 0, 140, 130));
 
@@ -362,7 +370,6 @@ public class Vista extends javax.swing.JFrame {
 
         herramientaLinea15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Formas/5_lados.png"))); // NOI18N
         herramientaLinea15.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        herramientaLinea15.setPreferredSize(new java.awt.Dimension(18, 20));
 
         herramientaLinea16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Formas/linea.png"))); // NOI18N
         herramientaLinea16.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -417,7 +424,7 @@ public class Vista extends javax.swing.JFrame {
                         .addComponent(herramientaLinea9))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(herramientaLinea15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(herramientaLinea15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(herramientaLinea14)
                         .addGap(12, 12, 12)
@@ -452,7 +459,7 @@ public class Vista extends javax.swing.JFrame {
                     .addComponent(herramientaLinea10)
                     .addComponent(herramientaLinea16)
                     .addComponent(herramientaLinea14)
-                    .addComponent(herramientaLinea15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(herramientaLinea15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(herramientaLinea9)
@@ -742,6 +749,9 @@ public class Vista extends javax.swing.JFrame {
             }
         });
         panelLienzo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                panelLienzoMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 panelLienzoMousePressed(evt);
             }
@@ -842,12 +852,22 @@ public class Vista extends javax.swing.JFrame {
                 int[] x = {mouseXinicio + (tamañoX / 2), mouseXfin, mouseXfin - (tamañoX / 2), mouseXinicio};
                 int[] y = {mouseYinicio, mouseYinicio + (tamañoY / 2), mouseYfin, mouseYfin - (tamañoY / 2)};
                 g.drawPolygon(x, y, 4);
+            } else if (figura.equals("lapiz")) {
+                decoracionExtremo = 1;
+                g.setStroke(new BasicStroke(grosor, decoracionExtremo, decoracionExtremo));
+                g.drawLine(mouseXinicio, mouseYinicio, mouseXfin, mouseYfin);
             }
         }
 
         //getContentPane().getComponent(2).repaint();
     }
 
+    
+    public void setPropiedadesApp(){
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("Imagenes/Logotipo/icono.png")));
+        this.setTitle("Paint JAVA - Equipo 6");
+    }
+    
     public void guardarLienzo() throws Exception {
         Rectangle screenRectangle = new Rectangle(210, 235, 1500, 754);
         Robot robot = new Robot();
@@ -882,7 +902,6 @@ public class Vista extends javax.swing.JFrame {
     }
 
     public void cambiarLinea() {
-
         Graphics g = pruebaGrosorLineas.getGraphics();
         Graphics2D g2d = (Graphics2D) g;
         if (g2d != null) {
@@ -893,13 +912,6 @@ public class Vista extends javax.swing.JFrame {
             g2d.drawLine(2, 15, 100, 15);
         }
     }
-
-    private void panelLienzoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelLienzoMousePressed
-        mouseXinicio = evt.getX();
-        mouseYinicio = evt.getY();
-
-        imprimir();
-    }//GEN-LAST:event_panelLienzoMousePressed
 
     private void herramientaLineaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_herramientaLineaMouseClicked
         figura = "linea";
@@ -935,10 +947,15 @@ public class Vista extends javax.swing.JFrame {
 
         imprimir();
         dibujarFiguras(getContentPane().getComponent(2).getGraphics());
+        if(figura.equals("lapiz")){
+            mouseXinicio = mouseXfin;
+            mouseYinicio = mouseYfin;
+        }
+        
     }//GEN-LAST:event_panelLienzoMouseDragged
 
     private void panelLienzoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelLienzoMouseReleased
-
+        dibujarFiguras(getContentPane().getComponent(2).getGraphics());
     }//GEN-LAST:event_panelLienzoMouseReleased
 
     private void botonCambiarColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCambiarColorMouseClicked
@@ -1049,6 +1066,27 @@ public class Vista extends javax.swing.JFrame {
         vista.setVisible(true);
     }//GEN-LAST:event_btnNuevoLienzoActionPerformed
 
+    private void btnLapizMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLapizMouseClicked
+        figura = "lapiz";
+    }//GEN-LAST:event_btnLapizMouseClicked
+
+    private void btnLapiz1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLapiz1MouseClicked
+        figura = "lapiz";
+    }//GEN-LAST:event_btnLapiz1MouseClicked
+
+    private void panelLienzoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelLienzoMousePressed
+        mouseXinicio = mouseXfin = evt.getX();
+        mouseYinicio = mouseYfin = evt.getY();
+        
+        this.imprimir();
+    }//GEN-LAST:event_panelLienzoMousePressed
+
+    private void panelLienzoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelLienzoMouseClicked
+        mouseXfin = mouseXinicio = evt.getX();
+        mouseYfin = mouseYinicio = evt.getY();
+        dibujarFiguras(getContentPane().getComponent(2).getGraphics());
+    }//GEN-LAST:event_panelLienzoMouseClicked
+
     public static void main(String args[]) {
 
         try {
@@ -1073,6 +1111,8 @@ public class Vista extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel botonCambiarColor;
     private javax.swing.JMenuItem btnGuardarLienzo;
+    private javax.swing.JLabel btnLapiz;
+    private javax.swing.JLabel btnLapiz1;
     private javax.swing.JMenuItem btnNuevoLienzo;
     private javax.swing.JComboBox<String> cambioTrazo;
     private javax.swing.JLabel colorSeleccionado;
